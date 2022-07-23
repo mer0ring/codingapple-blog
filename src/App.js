@@ -12,6 +12,7 @@ function App() {
   let [like, setLike] = useState([0, 0, 0]);
   let [modal, setModal] = useState(false);
   let [userInput, setUserInput] = useState('');
+  let [nowDate, setNowDate] = useState(['2022. 5. 1','2022. 5. 2','2022. 5. 3']);
 
   const articleNameChange = () => {
     let copyArticleName = [...articleName];
@@ -25,13 +26,35 @@ function App() {
   }
 
   const modalStatusChange = () => {
-    setModal(!modal);
+    if (articleName == null || articleName == '') {
+      return;
+    } else {
+      setModal(!modal);
+    }
+  }
+
+  const writeDate = () => {
+    let date = new Date();
+    let nowDateString = date.toLocaleDateString();
+    let copy = [...nowDate];
+    copy.unshift(nowDateString);
+    setNowDate(copy);
   }
 
   const arrayInput = () => {
     let copyArticleName = [...articleName];
-    copyArticleName.unshift(userInput);
-    setArticleName(copyArticleName);
+    if (userInput == null || userInput == '') {
+      alert('내용을 입력하세요.');
+      return;
+    } else {
+      copyArticleName.unshift(userInput);
+      setArticleName(copyArticleName);
+      writeDate();
+    
+      let copyLike = [...like];
+      copyLike.unshift(0);
+      setLike(copyLike);
+    }    
   }
 
   return (
@@ -60,11 +83,11 @@ function App() {
                 }}>😘</span>
                 {like[i]}
               </h4>
-              <p>2월 17일 발행</p>
+              <p>{nowDate[i]}</p>
               <button onClick={() => {
                 let copy = [...articleName];
-                let copySlice = copy.slice(i, 1);
-                setArticleName(copySlice); // 여기 하다 말았음
+                copy.splice(i, 1);
+                setArticleName(copy); // 여기 하다 말았음
               }}>글삭제</button>
             </article>
           );
@@ -77,8 +100,10 @@ function App() {
       <button onClick={arrayInput}>글추가</button>
       
       {
-        modal ? <Modal articleName={articleName} articleNameChange={articleNameChange} title={title} /> : null
-      }      
+        modal 
+          ? <Modal articleName={articleName} articleNameChange={articleNameChange} title={title} /> 
+          : null
+      }
 
     </div>
   );
